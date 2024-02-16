@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tiptap/core';
 import { EditorProvider } from '@tiptap/react';
 import Document from '@tiptap/extension-document';
@@ -13,10 +13,11 @@ const extensions = [
     Paragraph,
     Text,
     History,
-    Placeholder.configure({ placeholder: 'Enter some text...' }),
+    Placeholder.configure({ placeholder: 'Hello...' }),
 ];
 
 export default function MyEditor() {
+    const ref = useRef<HTMLDivElement>(null);
     const [scrollTimeoutId, setScrollTimeoutId] = useState<
         number | undefined
     >();
@@ -43,16 +44,51 @@ export default function MyEditor() {
         [scrollTimeoutId]
     );
 
+    useEffect(() => {
+        if (ref.current === null) {
+            return;
+        }
+
+        const element = ref.current;
+
+        const copyHandler = (event: ClipboardEvent) => {
+            if (event.clipboardData === null) {
+                return;
+            }
+
+            const html = event.clipboardData.getData('text/html');
+            const matches = html.matchAll(/<p.*?>(.*?)<\/p>/g);
+            const texts: string[] = [];
+            for (const match of matches) {
+                texts.push(
+                    match[1]
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&amp;/g, '&')
+                );
+            }
+            event.clipboardData.setData('text/plain', texts.join('\n'));
+        };
+
+        element.addEventListener('copy', copyHandler);
+
+        return () => {
+            element.removeEventListener('copy', copyHandler);
+        };
+    }, []);
+
     return (
-        <EditorProvider
-            extensions={extensions}
-            onSelectionUpdate={({ editor }) => {
-                if (scrollTimeoutId === undefined) {
-                    scrollToCaret(editor);
-                }
-            }}
-        >
-            <></>
-        </EditorProvider>
+        <div ref={ref}>
+            <EditorProvider
+                extensions={extensions}
+                onSelectionUpdate={({ editor }) => {
+                    if (scrollTimeoutId === undefined) {
+                        scrollToCaret(editor);
+                    }
+                }}
+            >
+                <></>
+            </EditorProvider>
+        </div>
     );
 }
