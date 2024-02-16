@@ -57,16 +57,15 @@ export default function MyEditor() {
             }
 
             const html = event.clipboardData.getData('text/html');
-            const matches = html.matchAll(/<p.*?>(.*?)<\/p>/g);
+            const div = document.createElement('div');
+            div.innerHTML = html;
+
             const texts: string[] = [];
-            for (const match of matches) {
-                texts.push(
-                    match[1]
-                        .replace(/&lt;/g, '<')
-                        .replace(/&gt;/g, '>')
-                        .replace(/&amp;/g, '&')
-                );
+            for (const node of div.childNodes) {
+                texts.push(node.textContent ?? '');
             }
+
+            div.remove();
             event.clipboardData.setData('text/plain', texts.join('\n'));
         };
 
