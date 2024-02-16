@@ -1,0 +1,37 @@
+.tiptap {
+    padding: calc(50vh - 36px) 0;
+    outline: 0;
+    resize: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+    color: #999;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+.tiptap p {
+    margin: 0;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    animation: text-scale linear;
+    animation-timeline: view();
+}
+
+.tiptap p:last-child {
+    margin-bottom: 0;
+}
+
+@keyframes text-scale {
+    0% {
+        font-size: 12px;
+    }
+    50% {
+        font-size: 48px;
+    }
+    100% {
+        font-size: 12px;
+    }
+}
