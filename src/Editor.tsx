@@ -23,18 +23,18 @@ export default function MyEditor() {
 
     const scrollToCaret = useCallback(
         (editor: Editor) => {
-            if (editor.state.selection.empty) {
-                const pos = editor.state.selection.$anchor.pos;
-                const coords = editor.view.coordsAtPos(pos);
-                const diff =
-                    coords.top + 24 - document.documentElement.clientHeight / 2;
+            const pos = editor.state.selection.$anchor.pos;
+            const coords = editor.view.coordsAtPos(pos);
+            const diff =
+                coords.top + 24 - document.documentElement.clientHeight / 2;
 
+            if (Math.abs(diff) > 0 && editor.state.selection.empty) {
                 window.scrollBy({
-                    top: diff,
-                    behavior: 'smooth',
+                    top:
+                        Math.abs(diff) > 1 ? Math.sign(diff) + diff / 30 : diff,
                 });
 
-                const timeoutId = setTimeout(() => scrollToCaret(editor), 100);
+                const timeoutId = setTimeout(() => scrollToCaret(editor), 1);
                 setScrollTimeoutId(timeoutId);
             } else {
                 clearTimeout(scrollTimeoutId);
