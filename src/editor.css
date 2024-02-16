@@ -7,7 +7,9 @@
 .tiptap p {
     margin: 0;
     margin-bottom: 16px;
+    font-size: 48px;
     line-height: 1.5;
+    transform-origin: left;
     animation: text-scale linear;
     animation-timeline: view();
 }
@@ -26,15 +28,12 @@
 
 @keyframes text-scale {
     0% {
-        width: 25%;
-        font-size: 12px;
+        transform: scale(0.25);
     }
     50% {
-        width: 100%;
-        font-size: 48px;
+        transform: scale(1);
     }
     100% {
-        width: 25%;
-        font-size: 12px;
+        transform: scale(0.25);
     }
 }
