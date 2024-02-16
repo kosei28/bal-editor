@@ -24,7 +24,7 @@ export default function MyEditor() {
                 const diff =
                     coords.top + 24 - document.documentElement.clientHeight / 2;
                 window.scrollBy({
-                    top: diff / 10,
+                    top: diff,
                     behavior: 'smooth',
                 });
             }}
