@@ -1,3 +1,5 @@
+import { useCallback, useState } from 'react';
+import { Editor } from '@tiptap/core';
 import { EditorProvider } from '@tiptap/react';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -15,18 +17,40 @@ const extensions = [
 ];
 
 export default function MyEditor() {
-    return (
-        <EditorProvider
-            extensions={extensions}
-            onSelectionUpdate={({ editor }) => {
-                const pos = editor.state.selection.$anchor.pos;
-                const coords = editor.view.coordsAtPos(pos);
-                const diff =
-                    coords.top + 24 - document.documentElement.clientHeight / 2;
+    const [scrollTimeoutId, setScrollTimeoutId] = useState<
+        number | undefined
+    >();
+
+    const scrollToCaret = useCallback(
+        (editor: Editor) => {
+            const pos = editor.state.selection.$anchor.pos;
+            const coords = editor.view.coordsAtPos(pos);
+            const diff =
+                coords.top + 24 - document.documentElement.clientHeight / 2;
+
+            if (editor.state.selection.empty) {
                 window.scrollBy({
                     top: diff,
                     behavior: 'smooth',
                 });
+
+                const timeoutId = setTimeout(() => scrollToCaret(editor), 100);
+                setScrollTimeoutId(timeoutId);
+            } else {
+                clearTimeout(scrollTimeoutId);
+                setScrollTimeoutId(undefined);
+            }
+        },
+        [scrollTimeoutId]
+    );
+
+    return (
+        <EditorProvider
+            extensions={extensions}
+            onSelectionUpdate={({ editor }) => {
+                if (scrollTimeoutId === undefined) {
+                    scrollToCaret(editor);
+                }
             }}
         >
             <></>
