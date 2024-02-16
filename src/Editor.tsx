@@ -23,12 +23,12 @@ export default function MyEditor() {
 
     const scrollToCaret = useCallback(
         (editor: Editor) => {
-            const pos = editor.state.selection.$anchor.pos;
-            const coords = editor.view.coordsAtPos(pos);
-            const diff =
-                coords.top + 24 - document.documentElement.clientHeight / 2;
-
             if (editor.state.selection.empty) {
+                const pos = editor.state.selection.$anchor.pos;
+                const coords = editor.view.coordsAtPos(pos);
+                const diff =
+                    coords.top + 24 - document.documentElement.clientHeight / 2;
+
                 window.scrollBy({
                     top: diff,
                     behavior: 'smooth',
