@@ -28,10 +28,9 @@ export default function MyEditor() {
             const diff =
                 coords.top + 24 - document.documentElement.clientHeight / 2;
 
-            if (Math.abs(diff) > 0 && editor.state.selection.empty) {
+            if (Math.abs(diff) > 1 && editor.state.selection.empty) {
                 window.scrollBy({
-                    top:
-                        Math.abs(diff) > 1 ? Math.sign(diff) + diff / 30 : diff,
+                    top: Math.sign(diff) + diff / 30,
                 });
 
                 const timeoutId = setTimeout(() => scrollToCaret(editor), 1);
