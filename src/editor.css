@@ -29,9 +29,15 @@ body {
     animation-timeline: view();
 }
 
-@media screen and (max-width: 768px) {
-    .tiptap p {
-        font-size: 32px;
+@keyframes text-scale {
+    0% {
+        transform: scale(0.25);
+    }
+    50% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0.25);
     }
 }
 
@@ -47,14 +53,12 @@ body {
     pointer-events: none;
 }
 
-@keyframes text-scale {
-    0% {
-        transform: scale(0.25);
+@media screen and (max-width: 768px) {
+    .tiptap {
+        padding: calc(var(--editor-height) / 2 - 24px) 40px;
     }
-    50% {
-        transform: scale(1);
-    }
-    100% {
-        transform: scale(0.25);
+
+    .tiptap p {
+        font-size: 32px;
     }
 }
