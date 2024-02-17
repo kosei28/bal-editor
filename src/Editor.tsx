@@ -19,44 +19,36 @@ const extensions = [
 export default function MyEditor() {
     const ref = useRef<HTMLDivElement>(null);
     const [editorHeight, setEditorHeight] = useState<number | undefined>();
-    const [fontSize, setFontSize] = useState<number>(48);
-    const [scrollTimeoutId, setScrollTimeoutId] = useState<
-        number | undefined
-    >();
 
-    const scrollToCaret = useCallback(
-        (editor: Editor) => {
-            const pos = editor.state.selection.$anchor.pos;
-            const coords = editor.view.coordsAtPos(pos);
-            const diff =
-                coords.top +
-                fontSize / 2 -
-                ref.current!.getBoundingClientRect().height / 2;
+    const scrollToCaret = useCallback((editor: Editor) => {
+        const pos = editor.state.selection.$anchor.pos;
+        const { node, offset } = editor.view.domAtPos(pos);
+        const range = document.createRange();
 
-            if (Math.abs(diff) > 1 && editor.state.selection.empty) {
-                ref.current!.scrollBy({
-                    top: Math.sign(diff) + diff / 30,
-                });
+        if (offset === 0) {
+            range.setStart(node, offset);
+            range.setEnd(node, offset + 1);
+        } else {
+            range.setStart(node, offset - 1);
+            range.setEnd(node, offset);
+        }
 
-                const timeoutId = setTimeout(() => scrollToCaret(editor), 1);
-                setScrollTimeoutId(timeoutId);
-            } else {
-                clearTimeout(scrollTimeoutId);
-                setScrollTimeoutId(undefined);
-            }
-        },
-        [fontSize, scrollTimeoutId]
-    );
+        const rect = range.getBoundingClientRect();
+        const caretCenterY = (rect.top + rect.bottom) / 2;
+        const diff =
+            caretCenterY - ref.current!.getBoundingClientRect().height / 2;
+
+        if (editor.state.selection.empty) {
+            ref.current!.scrollBy({
+                top: diff,
+                behavior: 'smooth',
+            });
+        }
+    }, []);
 
     useEffect(() => {
         const resizeHandler = () => {
             setEditorHeight(window.visualViewport?.height);
-
-            if (window.innerWidth > 768) {
-                setFontSize(48);
-            } else {
-                setFontSize(32);
-            }
         };
 
         resizeHandler();
@@ -108,9 +100,7 @@ export default function MyEditor() {
             <EditorProvider
                 extensions={extensions}
                 onSelectionUpdate={({ editor }) => {
-                    if (scrollTimeoutId === undefined) {
-                        scrollToCaret(editor);
-                    }
+                    scrollToCaret(editor);
                 }}
             >
                 <></>
