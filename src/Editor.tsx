@@ -68,16 +68,15 @@ export default function MyEditor() {
             }
 
             const html = event.clipboardData.getData('text/html');
-            const div = document.createElement('div');
-            div.innerHTML = html;
-
+            const doc = new DOMParser().parseFromString(html, 'text/html');
             const texts: string[] = [];
-            for (const node of div.childNodes) {
+
+            for (const node of doc.body.childNodes) {
                 texts.push(node.textContent ?? '');
             }
 
-            div.remove();
             event.clipboardData.setData('text/plain', texts.join('\n'));
+            event.clipboardData.clearData('text/html');
         };
 
         element.addEventListener('copy', copyHandler);
