@@ -13,7 +13,7 @@ body {
 
 .tiptap {
     max-width: 1000px;
-    padding: calc(50vh - 36px) 40px;
+    padding: calc(var(--editor-height) / 2 - 36px) 40px;
     margin: 0 auto;
     outline: 0;
     resize: none;

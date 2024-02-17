@@ -92,7 +92,11 @@ export default function MyEditor() {
         <div
             ref={ref}
             className="editor-container"
-            style={{ '--editor-height': editorHeight } as React.CSSProperties}
+            style={
+                {
+                    '--editor-height': `${editorHeight}px`,
+                } as React.CSSProperties
+            }
         >
             <EditorProvider
                 extensions={extensions}
