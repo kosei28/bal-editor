@@ -1,14 +1,10 @@
 body {
     margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-.container {
-    max-width: 1000px;
-    padding: 0 40px;
-    margin: 0 auto;
-}
-
-.container > h1 {
+.logo {
     position: fixed;
     top: 20px;
     left: 20px;

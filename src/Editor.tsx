@@ -18,6 +18,7 @@ const extensions = [
 
 export default function MyEditor() {
     const ref = useRef<HTMLDivElement>(null);
+    const [editorHeight, setEditorHeight] = useState<number | undefined>();
     const [scrollTimeoutId, setScrollTimeoutId] = useState<
         number | undefined
     >();
@@ -27,10 +28,12 @@ export default function MyEditor() {
             const pos = editor.state.selection.$anchor.pos;
             const coords = editor.view.coordsAtPos(pos);
             const diff =
-                coords.top + 24 - document.documentElement.clientHeight / 2;
+                coords.top +
+                24 -
+                ref.current!.getBoundingClientRect().height / 2;
 
             if (Math.abs(diff) > 1 && editor.state.selection.empty) {
-                window.scrollBy({
+                ref.current!.scrollBy({
                     top: Math.sign(diff) + diff / 30,
                 });
 
@@ -45,11 +48,20 @@ export default function MyEditor() {
     );
 
     useEffect(() => {
-        if (ref.current === null) {
-            return;
-        }
+        const resizeHandler = () => {
+            setEditorHeight(window.visualViewport?.height);
+        };
 
-        const element = ref.current;
+        resizeHandler();
+        window.addEventListener('resize', resizeHandler);
+
+        return () => {
+            window.removeEventListener('resize', resizeHandler);
+        };
+    }, []);
+
+    useEffect(() => {
+        const element = ref.current!;
 
         const copyHandler = (event: ClipboardEvent) => {
             if (event.clipboardData === null) {
@@ -77,7 +89,11 @@ export default function MyEditor() {
     }, []);
 
     return (
-        <div ref={ref}>
+        <div
+            ref={ref}
+            className="editor-container"
+            style={{ '--editor-height': editorHeight } as React.CSSProperties}
+        >
             <EditorProvider
                 extensions={extensions}
                 onSelectionUpdate={({ editor }) => {
