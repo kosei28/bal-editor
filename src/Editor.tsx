@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tiptap/core';
+import { Fragment, Node, Slice } from '@tiptap/pm/model';
 import { EditorProvider } from '@tiptap/react';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -100,6 +101,35 @@ export default function MyEditor() {
                 extensions={extensions}
                 onSelectionUpdate={({ editor }) => {
                     scrollToCaret(editor);
+                }}
+                editorProps={{
+                    handlePaste(view, event) {
+                        event.preventDefault();
+
+                        const text = event.clipboardData!.getData('text/plain');
+                        const nodes: Node[] = [];
+
+                        text.split('\n').forEach((paragraph) => {
+                            const node =
+                                view.state.schema.nodes.paragraph.createAndFill(
+                                    null,
+                                    paragraph.length > 0
+                                        ? view.state.schema.text(paragraph)
+                                        : undefined
+                                );
+                            nodes.push(node!);
+                        });
+
+                        const slice = new Slice(
+                            Fragment.fromArray(nodes),
+                            1,
+                            1
+                        );
+
+                        view.dispatch(view.state.tr.replaceSelection(slice));
+
+                        return true;
+                    },
                 }}
             >
                 <></>
