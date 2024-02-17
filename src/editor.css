@@ -29,6 +29,12 @@ body {
     animation-timeline: view();
 }
 
+@media screen and (max-width: 768px) {
+    .tiptap p {
+        font-size: 32px;
+    }
+}
+
 .tiptap p:last-child {
     margin-bottom: 0;
 }

@@ -19,6 +19,7 @@ const extensions = [
 export default function MyEditor() {
     const ref = useRef<HTMLDivElement>(null);
     const [editorHeight, setEditorHeight] = useState<number | undefined>();
+    const [fontSize, setFontSize] = useState<number>(48);
     const [scrollTimeoutId, setScrollTimeoutId] = useState<
         number | undefined
     >();
@@ -29,7 +30,7 @@ export default function MyEditor() {
             const coords = editor.view.coordsAtPos(pos);
             const diff =
                 coords.top +
-                24 -
+                fontSize / 2 -
                 ref.current!.getBoundingClientRect().height / 2;
 
             if (Math.abs(diff) > 1 && editor.state.selection.empty) {
@@ -44,12 +45,18 @@ export default function MyEditor() {
                 setScrollTimeoutId(undefined);
             }
         },
-        [scrollTimeoutId]
+        [fontSize, scrollTimeoutId]
     );
 
     useEffect(() => {
         const resizeHandler = () => {
             setEditorHeight(window.visualViewport?.height);
+
+            if (window.innerWidth > 768) {
+                setFontSize(48);
+            } else {
+                setFontSize(32);
+            }
         };
 
         resizeHandler();
