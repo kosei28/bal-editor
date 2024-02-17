@@ -53,10 +53,10 @@ export default function MyEditor() {
         };
 
         resizeHandler();
-        window.addEventListener('resize', resizeHandler);
+        window.visualViewport?.addEventListener('resize', resizeHandler);
 
         return () => {
-            window.removeEventListener('resize', resizeHandler);
+            window.visualViewport?.removeEventListener('resize', resizeHandler);
         };
     }, []);
 
